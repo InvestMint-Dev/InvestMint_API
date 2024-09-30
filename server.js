@@ -14,7 +14,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
     .catch(err => console.log(err));
 
 // API Routes
-app.use('/api/entries', require('./routes/entryRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
 // Start server
 const PORT = process.env.PORT || 5000;
