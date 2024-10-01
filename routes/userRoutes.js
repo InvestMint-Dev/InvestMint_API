@@ -1,5 +1,5 @@
 const express = require('express');
-const Entry = require('../models/Entry');
+const Entry = require('../models/User');
 const router = express.Router();
 
 // Get all entries
