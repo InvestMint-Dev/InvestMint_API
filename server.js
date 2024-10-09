@@ -1,36 +1,38 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const jwt = require('express-jwt');
-const jwksRsa = require('jwks-rsa');
-
+// server.js
 require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
 
-// Initialize app
+const mongoose = require('mongoose');
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+
 const app = express();
-app.use(cors());
 app.use(express.json());
 
-const checkJwt = jwt({
-    secret: jwksRsa.expressJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: `https://<YOUR-AUTH0-DOMAIN>/.well-known/jwks.json`,
-    }),
-    audience: '<YOUR-API-AUDIENCE>',
-    issuer: `https://<YOUR-AUTH0-DOMAIN>/`,
-    algorithms: ['RS256'],
-  });
-  
-  
-// Apply the middleware globally for all routes under '/api'
-app.use('/api', checkJwt);
+// Use CORS middleware
+app.use(cors({
+    origin: 'http://localhost:3000', // Allow requests from your frontend origin
+    methods: 'GET,POST,PUT,DELETE',  // Specify the allowed HTTP methods
+    credentials: true                // If you want to allow cookies to be sent
+  }));
 
-// Example protected route
-app.get('/api/protected', (req, res) => {
-  res.send('You are authorized to access this protected route.');
-});
-// Start server
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch((err) => console.error('MongoDB connection error:', err));
+
+  
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+
+// Start the server
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
