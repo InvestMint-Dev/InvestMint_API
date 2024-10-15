@@ -6,6 +6,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const companyInformationRoutes = require('./routes/companyInformation');
 
 const app = express();
 app.use(express.json());
@@ -30,6 +31,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/companyInformation', companyInformationRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 8000;
