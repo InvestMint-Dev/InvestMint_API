@@ -19,3 +19,6 @@ const companyInformationSchema = new mongoose.Schema({
     advisorName: { type: String }, 
     companyInvestmentAccountNumber: { type: String }, 
   });
+
+const CompanyInformation = mongoose.model('CompanyInformation', companyInformationSchema);
+module.exports = CompanyInformation;
