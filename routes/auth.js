@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 // Signup route
 router.post('/signup', async (req, res) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password } = req.body;
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
@@ -20,7 +20,6 @@ router.post('/signup', async (req, res) => {
     const newUser = new User({
       email,
       password,
-      name,
       auth0_id: 'auth0|' + new Date().getTime(), // Generate a simple mock auth0_id for now
     });
 
@@ -31,9 +30,14 @@ router.post('/signup', async (req, res) => {
       expiresIn: '1h',
     });
 
-    res.status(201).json({ message: 'User registered successfully', token });
+   // Respond with the created user ID (_id)
+    res.status(201).json({
+      message: 'User created successfully',
+      userId: newUser._id, // Return the userId in the response
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error creating user' });
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Error creating user', error: error.message });
   }
 });
 
