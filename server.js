@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const companyInformationRoutes = require('./routes/companyInformation');
+const investingQuestionnaireRoutes = require('./routes/investingQuestionnaire');
 
 const app = express();
 app.use(express.json());
@@ -32,6 +33,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/companyInformation', companyInformationRoutes);
+app.use('/api/investingQuestionnaire', investingQuestionnaireRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 8000;
