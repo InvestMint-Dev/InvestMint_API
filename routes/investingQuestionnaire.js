@@ -92,15 +92,15 @@ router.get('/:userId', async (req, res) => {
         const { userId } = req.params;
 
         // Find the user
-        const user = await User.findById(userId).populate('companyInformation');
+        const user = await User.findById(userId).populate('investingQuestionnaire');
 
-        if (!user || !user.companyInformation) {
-            return res.status(404).json({ message: 'Company information not found' });
+        if (!user || !user.investingQuestionnaire) {
+            return res.status(404).json({ message: 'Investing information not found' });
         }
 
-        res.status(200).json(user.companyInformation);
+        res.status(200).json(user.investingQuestionnaire);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching company information', error });
+        res.status(500).json({ message: 'Error fetching investing information', error });
     }
 });
 
