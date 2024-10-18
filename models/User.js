@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true }, // Store hashed password,
+  auth0_id: { value: Date.now(), type: String, sparse: true }, // Use sparse if null values are allowed
   securityQuestion1: {type: String, required: true},
   securityAnswer1: {type: String, required: true},
   securityQuestion2: {type: String, required: true},

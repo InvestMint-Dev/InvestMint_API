@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 // Signup route
 router.post('/signup', async (req, res) => {
   try {
-    const { email, password, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2 } = req.body;
+    const { email, password, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2, auth0_id } = req.body;
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
@@ -23,7 +23,8 @@ router.post('/signup', async (req, res) => {
       securityQuestion1, 
       securityAnswer1, 
       securityQuestion2, 
-      securityAnswer2
+      securityAnswer2,
+      auth0_id: auth0_id || undefined // Only set if provided
     });
 
     
