@@ -7,9 +7,6 @@ const User = require('../models/User');
 // POST /api/companyInformation/:userId - Create or Update company information for a user
 router.post('/:userId', async (req, res) => {
     try {
-        console.log('Request received for userId:', req.params.userId);
-        console.log('Request body:', req.body);
-
         const { userId } = req.params;
         const {
             firstName,
@@ -60,7 +57,6 @@ router.post('/:userId', async (req, res) => {
                 },
                 { new: true }
             );
-            console.log('Updated company information:', companyInfo);
         } else {
             // Otherwise, create new company information
             companyInfo = new CompanyInformation({
@@ -87,13 +83,11 @@ router.post('/:userId', async (req, res) => {
             // Link the company information to the user
             user.companyInformation = companyInfo._id;
             await user.save();
-            console.log('New company information created:', companyInfo);
         }
 
         // Return the updated or newly created company information
         res.status(200).json(companyInfo);
     } catch (error) {
-        console.error('Error saving company information:', error);
         res.status(500).json({ message: 'Error saving company information', error: error.message });
     }
 });
@@ -103,13 +97,9 @@ router.post('/:userId', async (req, res) => {
 router.get('/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        
 
         // Find the user
         const user = await User.findById(userId).populate('companyInformation');
-
-        // Log the user data to see if the companyInformation is populated correctly
-        console.log('User data:', user);
 
         if (!user || !user.companyInformation) {
             return res.status(404).json({ message: 'Company information not found' });
