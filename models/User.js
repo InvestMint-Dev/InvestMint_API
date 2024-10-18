@@ -3,9 +3,12 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-  auth0_id: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }, // Store hashed password
+  password: { type: String, required: true }, // Store hashed password,
+  securityQuestion1: {type: String, required: true},
+  securityAnswer1: {type: String, required: true},
+  securityQuestion2: {type: String, required: true},
+  securityAnswer2: {type: String, required: true},
   companyInformation: { type: mongoose.Schema.Types.ObjectId, ref: 'CompanyInformation' }, // Reference to CompanyInformation
 });
 

@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 // Signup route
 router.post('/signup', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2 } = req.body;
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
@@ -17,13 +17,15 @@ router.post('/signup', async (req, res) => {
     }
 
     // Create a new user
-    const newUser = new User({
+    const newUser = await User.create({
       email,
       password,
-      auth0_id: 'auth0|' + new Date().getTime(), // Generate a simple mock auth0_id for now
+      securityQuestion1, 
+      securityAnswer1, 
+      securityQuestion2, 
+      securityAnswer2
     });
 
-    await newUser.save();
     
     // Generate a JWT token
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
