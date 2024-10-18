@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Use CORS middleware
 app.use(cors({
-    origin: 'https://InvestMint-Dev.github.io/InvestMint-UI', // Make sure this matches exactly with your frontend URL
+    origin: 'https://investmint-dev.github.io', // Allow requests from your frontend origin
     methods: 'GET,POST,PUT,DELETE',  // Specify the allowed HTTP methods
     credentials: true                // If you want to allow cookies to be sent
   }));
