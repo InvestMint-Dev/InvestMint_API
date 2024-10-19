@@ -79,5 +79,22 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// Check email route
+router.post('/check-email', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+      // Check if the user exists
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+          return res.status(400).json({ message: 'User already exists.' });
+      }
+      res.status(200).json({ message: 'Email is available.' });
+  } catch (error) {
+      console.error('Error checking email:', error);
+      res.status(500).json({ message: 'Error checking email', error: error.message });
+  }
+});
+
   
 module.exports = router;
