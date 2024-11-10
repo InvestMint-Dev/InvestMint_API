@@ -99,46 +99,46 @@ router.post('/check-email', async (req, res) => {
 
 const crypto = require('crypto');
 const nodemailer = require('nodemailer'); // Only if sending emails
-// Forgot Password Route
-router.post('/forgot-password', async (req, res) => {
-  const { email } = req.body;
+// // Forgot Password Route
+// router.post('/forgot-password', async (req, res) => {
+//   const { email } = req.body;
 
-  try {
-      // Check if the user exists
-      const user = await User.findOne({ email });
-      if (!user) {
-          return res.status(404).json({ message: 'User not found.' });
-      }
+//   try {
+//       // Check if the user exists
+//       const user = await User.findOne({ email });
+//       if (!user) {
+//           return res.status(404).json({ message: 'User not found.' });
+//       }
 
-      // Generate a reset token (you could also use a random string or UUID)
-      const resetToken = crypto.randomBytes(32).toString('hex');
+//       // Generate a reset token (you could also use a random string or UUID)
+//       const resetToken = crypto.randomBytes(32).toString('hex');
 
-      // Optionally send the reset link via email
-      const resetLink = `${process.env.ORIGIN}/reset-password?token=${resetToken}`;
-      const message = `Please use the following link to reset your password: ${resetLink}`;
+//       // Optionally send the reset link via email
+//       const resetLink = `${process.env.ORIGIN}/reset-password?token=${resetToken}`;
+//       const message = `Please use the following link to reset your password: ${resetLink}`;
 
-      if (process.env.NODE_ENV !== 'test') {
-          const transporter = nodemailer.createTransport({
-              service: 'Gmail',
-              auth: {
-                  user: process.env.EMAIL_USER,
-                  pass: process.env.EMAIL_PASS,
-              },
-          });
+//       if (process.env.NODE_ENV !== 'test') {
+//           const transporter = nodemailer.createTransport({
+//               service: 'Gmail',
+//               auth: {
+//                   user: process.env.EMAIL_USER,
+//                   pass: process.env.EMAIL_PASS,
+//               },
+//           });
 
-          await transporter.sendMail({
-              to: email,
-              subject: 'Password Reset',
-              text: message,
-          });
-      }
+//           await transporter.sendMail({
+//               to: email,
+//               subject: 'Password Reset',
+//               text: message,
+//           });
+//       }
 
-      res.status(200).json({ message: 'Password reset link sent successfully' });
-  } catch (error) {
-      console.error('Error sending reset email:', error);
-      res.status(500).json({ message: 'Error sending reset email', error: error.message });
-  }
-});
+//       res.status(200).json({ message: 'Password reset link sent successfully' });
+//   } catch (error) {
+//       console.error('Error sending reset email:', error);
+//       res.status(500).json({ message: 'Error sending reset email', error: error.message });
+//   }
+// });
 
   
 module.exports = router;
