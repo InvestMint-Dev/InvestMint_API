@@ -128,7 +128,7 @@ router.post('/forgot-password', async (req, res) => {
       await user.save();
 
       // Create the reset URL
-      const resetUrl = `${process.env.ORIGIN}/reset-password?token=${resetToken}`;
+      const resetUrl = `${process.env.ORIGIN}/InvestMint-UI#/reset-password?token=${resetToken}`;
 
       // Email template
       const mailOptions = {
