@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
   securityAnswer2: {type: String, required: true},
   companyInformation: { type: mongoose.Schema.Types.ObjectId, ref: 'CompanyInformation' }, // Reference to CompanyInformation
   investingQuestionnaire: { type: mongoose.Schema.Types.ObjectId, ref: 'InvestingQuestionnaire' }, // Reference to CompanyInformation
+  passwordResetToken: {type: String},
+  passwordResetExpires: {type: Date},  
 });
 
 // Hash password before saving user
