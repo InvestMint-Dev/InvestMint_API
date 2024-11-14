@@ -109,118 +109,170 @@ const transporter = nodemailer.createTransport({
 });
 // Forgot Password Route
 router.post('/forgot-password', async (req, res) => {
-  const { email } = req.body;
+    const { email } = req.body;
 
-  try {
-      // Check if the user exists
-      const user = await User.findOne({ email });
-      if (!user) {
-          return res.status(404).json({ message: 'We could not find an account associated with this email.' });
-      }
+    try {
+        // Check if the user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'We could not find an account associated with this email.' });
+        }
 
-      // Generate a reset token
-      const resetToken = crypto.randomBytes(32).toString('hex');
-      const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+        // Generate a reset token
+        const resetToken = crypto.randomBytes(32).toString('hex');
 
-      // Save the hashed token to the user document
-      user.passwordResetToken = hashedToken;
-      user.passwordResetExpires = Date.now() + 3600000; // Token expires in 1 hour
-      await user.save();
+        const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
-      // Create the reset URL
-      const resetUrl = `${process.env.ORIGIN}/InvestMint-UI#/reset-password?token=${resetToken}`;
+        // Save the hashed token to the user document
+        user.passwordResetToken = hashedToken;
+        user.passwordResetExpires = Date.now() + 3600000; // Token expires in 1 hour
+        await user.save();
 
-      // Email template
-      const mailOptions = {
-          from: process.env.EMAIL_USER,
-          to: email,
-          subject: 'InvestMint Password Reset',
-          html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                  <h2 style="color: #333;">Password Reset Request</h2>
-                  <p>You requested a password reset for your InvestMint account. Click the button below to reset your password:</p>
-                  <div style="text-align: center; margin: 30px 0;">
-                      <a href="${resetUrl}" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Reset Password</a>
-                  </div>
-                  <p>This link will expire in 1 hour.</p>
-                  <p>If you didn't request this password reset, please ignore this email or contact support if you have concerns.</p>
-                  <hr style="border: 1px solid #eee; margin: 20px 0;">
-                  <p style="color: #666; font-size: 12px;">This is an automated email, please do not reply.</p>
-              </div>
-          `
-      };
+        // Create the reset URL
+        const resetUrl = `${process.env.ORIGIN}/InvestMint-UI#/reset-password?token=${resetToken}`;
 
-      try {
-          // Verify transporter
-          await transporter.verify();
-          
-          // Send email
-          await transporter.sendMail(mailOptions);
-          
-          res.status(200).json({ 
-              message: 'Password reset instructions sent to your email.',
-              // Don't send the token in the response for security
-              expires: user.passwordResetExpires 
-          });
-          
-      } catch (emailError) {
-          // If email fails, revert the token save
-          user.passwordResetToken = undefined;
-          user.passwordResetExpires = undefined;
-          await user.save();
-          
-          console.error('Email error:', emailError);
-          throw new Error('Failed to send password reset email');
-      }
+        // Email template
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'InvestMint Password Reset',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #333;">Password Reset Request</h2>
+                    <p>You requested a password reset for your InvestMint account. Click the button below to reset your password:</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${resetUrl}" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Reset Password</a>
+                    </div>
+                    <p>This link will expire in 1 hour.</p>
+                    <p>If you didn't request this password reset, please ignore this email or contact support if you have concerns.</p>
+                    <hr style="border: 1px solid #eee; margin: 20px 0;">
+                    <p style="color: #666; font-size: 12px;">This is an automated email, please do not reply.</p>
+                </div>
+            `
+        };
 
-  } catch (error) {
-      console.error('Error in forgot password:', error);
-      res.status(500).json({ 
-          message: 'Error processing password reset request',
-          error: error.message 
-      });
-  }
+        try {
+            // Verify transporter
+            await transporter.verify();
+            
+            // Send email
+            await transporter.sendMail(mailOptions);
+            
+            res.status(200).json({ 
+                message: 'Password reset instructions sent to your email.',
+                // Don't send the token in the response for security
+                expires: user.passwordResetExpires 
+            });
+            
+        } catch (emailError) {
+            // If email fails, revert the token save
+            user.passwordResetToken = undefined;
+            user.passwordResetExpires = undefined;
+            await user.save();
+            
+            console.error('Email error:', emailError);
+            throw new Error('Failed to send password reset email');
+        }
+
+    } catch (error) {
+        console.error('Error in forgot password:', error);
+        res.status(500).json({ 
+            message: 'Error processing password reset request',
+            error: error.message 
+        });
+    }
 });
 
-// // Add Reset Password Route
-// router.post('/reset-password', async (req, res) => {
-//   const { token, newPassword } = req.body;
+// Reset Password Route
+router.post('/reset-password', async (req, res) => {
+    const { token, password } = req.body;
 
-//   try {
-//       // Hash the token from the request
-//       const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    try {        
+        // Validate input
+        if (!token) {
+            return res.status(400).json({ 
+                message: 'Reset token is required.' 
+            });
+        }
 
-//       // Find user with valid token and not expired
-//       const user = await User.findOne({
-//           passwordResetToken: hashedToken,
-//           passwordResetExpires: { $gt: Date.now() }
-//       });
+        if (!password) {
+            return res.status(400).json({ 
+                message: 'New password is required.' 
+            });
+        }
 
-//       if (!user) {
-//           return res.status(400).json({ 
-//               message: 'Password reset token is invalid or has expired' 
-//           });
-//       }
+        // Validate password length
+        if (password.length < 8) {
+            return res.status(400).json({ 
+                message: 'Password must be at least 8 characters long.' 
+            });
+        }
 
-//       // Hash the new password
-//       const salt = await bcrypt.genSalt(10);
-//       const hashedPassword = await bcrypt.hash(newPassword, salt);
+        // Convert the plain token to hashed version to match what's stored
+        let hashedToken;
+        try {
+            hashedToken = crypto.createHash('sha256').update(String(token)).digest('hex');
+        } catch (hashError) {
+            console.error('Error hashing token:', hashError);
+            return res.status(400).json({ 
+                message: 'Invalid reset token format.' 
+            });
+        }
 
-//       // Update user password and clear reset token fields
-//       user.password = hashedPassword;
-//       user.passwordResetToken = undefined;
-//       user.passwordResetExpires = undefined;
-//       await user.save();
+        // Find user with valid reset token and token not expired
+        const user = await User.findOne({
+            passwordResetToken: hashedToken,
+            passwordResetExpires: { $gt: Date.now() }
+        });
 
-//       res.status(200).json({ message: 'Password has been reset successfully' });
+        // Debug logs
+        console.log('Found user:', user ? 'Yes' : 'No');
+        if (!user) {
+            const expiredUser = await User.findOne({
+                passwordResetToken: hashedToken
+            });
+            if (expiredUser) {
+                console.log('Token expired. Expiry time was:', expiredUser.passwordResetExpires);
+                console.log('Current time:', Date.now());
+            }
+        }
 
-//   } catch (error) {
-//       console.error('Error in reset password:', error);
-//       res.status(500).json({ 
-//           message: 'Error resetting password',
-//           error: error.message 
-//       });
-//   }
-// });
+        if (!user) {
+            return res.status(400).json({ 
+                message: 'Password reset token is invalid or has expired.' 
+            });
+        }
+
+        // Hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Update user's password and clear reset token fields
+        user.password = hashedPassword;
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save();
+
+        // Generate a new JWT token for automatic login
+        const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: '1h',
+        });
+
+        res.status(200).json({
+            message: 'Password has been reset successfully.',
+            token: jwtToken
+        });
+
+    } catch (error) {
+        console.error('Error in reset password:', error);
+        res.status(500).json({ 
+            message: 'Error resetting password',
+            error: error.message 
+        });
+    }
+});
+
+
+
 
 module.exports = router;
