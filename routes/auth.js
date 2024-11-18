@@ -82,18 +82,18 @@ router.post('/login', async (req, res) => {
 
 // Check email route
 router.post('/check-email', async (req, res) => {
-  const { email } = req.body;
+    const { email } = req.body;
 
-  try {
-      // Check if the user exists
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-          return res.status(400).json({ message: 'User already exists.' });
-      }
-      res.status(200).json({ message: 'Email is available.' });
-  } catch (error) {
-      console.error('Error checking email:', error);
-      res.status(500).json({ message: 'Error checking email', error: error.message });
+    try {
+        // Check if the user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+        return res.status(400).json({ message: 'User already exists.' });
+        }
+        res.status(200).json({ message: 'Email is available.' });
+    } catch (error) {
+        console.error('Error checking email:', error);
+        res.status(500).json({ message: 'Error checking email', error: error.message });
   }
 });
 
@@ -107,6 +107,7 @@ const transporter = nodemailer.createTransport({
       pass: process.env.EMAIL_PASS  // This needs to be an App Password, not your regular password
   }
 });
+
 // Forgot Password Route
 router.post('/forgot-password', async (req, res) => {
     const { email } = req.body;
@@ -271,8 +272,5 @@ router.post('/reset-password', async (req, res) => {
         });
     }
 });
-
-
-
 
 module.exports = router;
