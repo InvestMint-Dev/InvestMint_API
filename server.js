@@ -20,6 +20,18 @@ app.use(cors({
     credentials: true                // If you want to allow cookies to be sent
   }));
 
+
+  const corsOptions = {
+    origin: process.env.ALLOWED_ORIGIN, // Dynamically read the allowed origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Include credentials if needed
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
