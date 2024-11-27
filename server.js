@@ -15,22 +15,13 @@ app.use(express.json());
 
 // Use CORS middleware
 app.use(cors({
-    origin: process.env.ORIGIN, // Allow requests from your frontend origin
-    methods: 'GET,POST,PUT,DELETE',  // Specify the allowed HTTP methods
-    credentials: true                // If you want to allow cookies to be sent
-  }));
+  origin: process.env.ALLOWED_ORIGIN, // Use a single source for the allowed origin
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
 
-
-  const corsOptions = {
-    origin: process.env.ALLOWED_ORIGIN, // Dynamically read the allowed origin
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Include credentials if needed
-};
-
-app.use(cors(corsOptions));
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// Handle preflight requests (optional but ensures OPTIONS method works correctly)
+app.options('*', cors());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
