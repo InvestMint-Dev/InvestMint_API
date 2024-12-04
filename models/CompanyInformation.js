@@ -14,7 +14,6 @@ const companyInformationSchema = new mongoose.Schema({
     state: { type: String, required: true },
     zipcode: { type: String, required: true },
     countryName: { type: String, required: true },
-    companyPhoneNumber: { type: String, required: false },
     advisorName: { type: String, required: false },
     companyBankAccounts: [{
       id: { type: Number, required: true },  // or String, based on your requirements
