@@ -11,7 +11,6 @@ const companyInformationSchema = new mongoose.Schema({
     state: { type: String, required: true },
     zipcode: { type: String, required: true },
     countryName: { type: String, required: true },
-    advisorName: { type: String, required: false },
     authPersonnel: [{
       id: { type: Number, required: true },  // or String, based on your requirements
       firstName: { type: String, required: true },
@@ -24,9 +23,16 @@ const companyInformationSchema = new mongoose.Schema({
       accountNumber: { type: String, required: true },
       bankerName: { type: String, required: true },
       currency: { type: String, required: true },
-      currentInterstRate: { type: String, required: true }
+      currentInterestRate: { type: String, required: true }
     }],
-    companyInvestmentAccountNumber: { type: String }
+    investmentAdvisors: [{
+      id: { type: Number, required: true },  
+      broker: { type: String, required: true },
+      investmentAccountNumber: { type: String, required: true },
+      advisorName: { type: String, required: true },
+      investmentCurrency: { type: String, required: true },
+      investmentInterestRate:{ type: String, required: true }
+    }]
   });
 
 const CompanyInformation = mongoose.model('CompanyInformation', companyInformationSchema);
