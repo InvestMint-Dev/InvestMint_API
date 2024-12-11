@@ -7,7 +7,6 @@ const companyInformationSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     email: { type: String, required: true },
     phoneNumber: { type: String, required: true },
-    mobileNumber: { type: String, required: true },
     companyName: { type: String, required: true },
     companyAddressLine: { type: String, required: true },
     city: { type: String, required: true },
