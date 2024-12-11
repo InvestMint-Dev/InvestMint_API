@@ -21,7 +21,10 @@ const companyInformationSchema = new mongoose.Schema({
     companyBankAccounts: [{
       id: { type: Number, required: true },  // or String, based on your requirements
       bank: { type: String, required: true },
-      accountNumber: { type: String, required: true }
+      accountNumber: { type: String, required: true },
+      bankerName: { type: String, required: true },
+      currency: { type: String, required: true },
+      currentInterstRate: { type: String, required: true }
     }],
     companyInvestmentAccountNumber: { type: String }
   });
