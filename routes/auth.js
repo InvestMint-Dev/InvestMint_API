@@ -11,6 +11,10 @@ router.post('/signup', async (req, res) => {
   try {
     const { email, password, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2, auth0_id } = req.body;
 
+    if (!req.body.securityQuestion2) {
+        return res.status(400).json({ error: 'Missing required fields.' });
+    }
+
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {

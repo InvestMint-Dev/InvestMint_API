@@ -9,20 +9,17 @@ router.post('/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
         const {
-            firstName,
-            lastName,
             email,
             phoneNumber,
-            mobileNumber,
             companyName,
             companyAddressLine,
             city,
             state,
             zipcode,
             countryName,
-            advisorName,
+            authPersonnel,
             companyBankAccounts,
-            companyInvestmentAccountNumber,
+            investmentAdvisors
         } = req.body;
 
         // Find the user by userId
@@ -38,40 +35,34 @@ router.post('/:userId', async (req, res) => {
             companyInfo = await CompanyInformation.findByIdAndUpdate(
                 user.companyInformation,
                 {
-                    firstName,
-                    lastName,
                     email,
                     phoneNumber,
-                    mobileNumber,
                     companyName,
                     companyAddressLine,
                     city,
                     state,
                     zipcode,
                     countryName,
-                    advisorName,
+                    authPersonnel,
                     companyBankAccounts,
-                    companyInvestmentAccountNumber,
+                    investmentAdvisors
                 },
                 { new: true }
             );
         } else {
             // Otherwise, create new company information
             companyInfo = new CompanyInformation({
-                firstName,
-                lastName,
                 email,
                 phoneNumber,
-                mobileNumber,
                 companyName,
                 companyAddressLine,
                 city,
                 state,
                 zipcode,
                 countryName,
-                advisorName,
+                authPersonnel,
                 companyBankAccounts,
-                companyInvestmentAccountNumber,
+                investmentAdvisors
             });
 
             // Save the company information
